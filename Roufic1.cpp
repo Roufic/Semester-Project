@@ -1,58 +1,79 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-using namespace std;
 
-	struct User 
-	{
-    	string username;
-    	string password;
-	};
-	bool registerUser( string username,  string password) 
-	{
-		User newUser;
-		newUser.username = username ;
-    	newUser.password = password ;
-	    ofstream file("New User.txt");
-	    
+void signUp() {
+    std::string username, password;
+    std::cout << "Sign Up\n";
+    std::cout << "Username: ";
+    std::cin >> username;
+    std::cout << "Password: ";
+    std::cin >> password;
 
-	    if (!file.is_open()) 
-		{
-        	cout << "Error creating user file!" << endl;
-        	return false;
-		}
-		
-		file << "Username: " << username << endl;
-	    file << "Password: " << password << endl;
-	    file.close();
-	    cout << "User registered successfully!" << endl;
-    	return true;
-    
-	}
-
-
-
-
-
-int main ()
-{
-	string username, password;
-	cout << "Enter your username: ";
-	cin >> username;
-	cout << "Enter your password: ";
-	cin >> password;
-	
-	bool registerUser( string username,  string password);
-	if (registerUser(username, password)) 
-	{
-        cout << "Registration successful." << endl;
-    } 
-	else 
-	{
-        cout << "Registration failed." << endl;
+    std::ofstream outFile("credentials.txt", std::ios::app);
+    if (outFile.is_open()) {
+        outFile << username << " " << password << "\n";
+        outFile.close();
+        std::cout << "Sign up successful!\n";
+    } else {
+        std::cout << "Error opening file.\n";
     }
-
-
-	
-	return 0;
 }
+
+void signIn() {
+    std::string username, password;
+    std::cout << "Sign In\n";
+    std::cout << "Username: ";
+    std::cin >> username;
+    std::cout << "Password: ";
+    std::cin >> password;
+
+    std::ifstream inFile("credentials.txt");
+    if (inFile.is_open()) {
+        std::string storedUsername, storedPassword;
+        bool found = false;
+        while (inFile >> storedUsername >> storedPassword) {
+            if (username == storedUsername && password == storedPassword) {
+                found = true;
+                break;
+            }
+        }
+        inFile.close();
+        if (found) {
+            std::cout << "Account Signed In Successfully!\n";
+        } else {
+            std::cout << "Invalid credentials.\n";
+        }
+    } else {
+        std::cout << "Error opening file.\n";
+    }
+}
+
+int main() {
+    int choice;
+    do {
+        std::cout << "Welcome!\n";
+        std::cout << "1. Sign Up\n";
+        std::cout << "2. Sign In\n";
+        std::cout << "3. Quit\n";
+        std::cout << "Enter your choice: ";
+        std::cin >> choice;
+
+        switch (choice) {
+            case 1:
+                signUp();
+                break;
+            case 2:
+                signIn();
+                break;
+            case 3:
+                std::cout << "Goodbye!\n";
+                break;
+            default:
+                std::cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 3);
+
+    return 0;
+}
+            
